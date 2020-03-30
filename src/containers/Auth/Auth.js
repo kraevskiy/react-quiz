@@ -1,11 +1,13 @@
-import React, {Component} from 'react';
+import React, {Component} from 'react'
 import classes from './Auth.module.css'
-import Button from "../../components/UI/Button/Button";
-import Input from "../../components/UI/Input/Input";
+import Button from "../../components/UI/Button/Button"
+import Input from "../../components/UI/Input/Input"
+import is from 'is_js'
 
 class Auth extends Component {
 
 	state = {
+		isFormValid: false,
 		formControls: {
 			email: {
 				value: '',
@@ -43,29 +45,69 @@ class Auth extends Component {
 		event.preventDefault()
 	}
 
-	onChangeHandler = (event, controlName) => {
-		console.log(controlName, event.target.value);
+	validateControl(value, validation) {
+		if (!validation) {
+			return true
+		}
+
+		let isValid = true
+
+		if (validation.required) {
+			isValid = value.trim() !== '' && isValid
+		}
+
+		if (validation.email) {
+			isValid = is.email(value) && isValid
+		}
+
+		if (validation.minLength) {
+			isValid = value.length >= validation.minLength && isValid
+		}
+
+		return isValid
 	}
 
-	renderInputs(){
-		return  Object.keys(this.state.formControls).map((controlName, index)=>{
+	onChangeHandler = (event, controlName) => {
+		const formControls = {...this.state.formControls}
+		const control = {...formControls[controlName]}
+
+		control.value = event.target.value
+		control.touched = true
+		control.valid = this.validateControl(control.value, control.validation)
+
+		formControls[controlName] = control
+
+		let isFormValid = true
+
+		Object.keys(formControls).forEach( name =>{
+			isFormValid = formControls[name].valid && isFormValid
+		})
+
+		this.setState({
+			formControls, isFormValid
+		})
+	}
+
+	renderInputs() {
+		return Object.keys(this.state.formControls).map((controlName, index) => {
 			const control = this.state.formControls[controlName]
-			return(
+			return (
 				<Input
 					key={controlName + index}
 					type={control.type}
 					value={control.value}
-					valid={control.value}
+					valid={control.valid}
 					touched={control.touched}
 					label={control.label}
-					shoudValidate={!!control.validation}
-					erroMessage={control.errorMessage}
-					onChange={event=>this.onChangeHandler(event, controlName)}
+					shouldValidate={!!control.validation}
+					errorMessage={control.errorMessage}
+					onChange={event => this.onChangeHandler(event, controlName)}
 				/>
 			)
 		})
 
 	}
+
 	render() {
 		return (
 			<div className={classes.Auth}>
@@ -78,10 +120,14 @@ class Auth extends Component {
 
 						<Button
 							type="success"
-							onclick={this.loginHandler}>Войти</Button>
+							onclick={this.loginHandler}
+							disabled={!this.state.isFormValid}
+						>Войти</Button>
 						<Button
 							type="primary"
-							onclick={this.registerHandler}>Зарегистрироваться</Button>
+							onclick={this.registerHandler}
+							disabled={!this.state.isFormValid}
+						>Зарегистрироваться</Button>
 					</form>
 				</div>
 			</div>
