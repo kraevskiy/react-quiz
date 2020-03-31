@@ -44,14 +44,12 @@ class Auth extends Component {
 		}
 		try {
 			const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAV9AbArezupzCv4jBg9sE5NPAoKegMiTo', authData)
-			console.log(response);
 		} catch (e) {
-			console.log(3);
+			console.log(e);
 		}
 
 	}
 	registerHandler = async () => {
-		console.log(11111);
 		const authData = {
 			email: this.state.formControls.email.value,
 			password: this.state.formControls.password.value,
@@ -59,9 +57,8 @@ class Auth extends Component {
 		}
 		try {
 			const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAV9AbArezupzCv4jBg9sE5NPAoKegMiTo', authData)
-			console.log(response);
 		} catch (e) {
-			console.log(3);
+			console.log(e);
 		}
 	}
 	submitHandler = event => {
