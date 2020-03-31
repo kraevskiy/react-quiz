@@ -3,6 +3,7 @@ import classes from './Auth.module.css'
 import Button from "../../components/UI/Button/Button"
 import Input from "../../components/UI/Input/Input"
 import is from 'is_js'
+import axios from 'axios'
 
 class Auth extends Component {
 
@@ -35,11 +36,33 @@ class Auth extends Component {
 			}
 		}
 	}
-	loginHandler = () => {
+	loginHandler = async () => {
+		const authData = {
+			email: this.state.formControls.email.value,
+			password: this.state.formControls.password.value,
+			returnSecureToken: true
+		}
+		try {
+			const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAV9AbArezupzCv4jBg9sE5NPAoKegMiTo', authData)
+			console.log(response);
+		} catch (e) {
+			console.log(3);
+		}
 
 	}
-	registerHandler = () => {
-
+	registerHandler = async () => {
+		console.log(11111);
+		const authData = {
+			email: this.state.formControls.email.value,
+			password: this.state.formControls.password.value,
+			returnSecureToken: true
+		}
+		try {
+			const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAV9AbArezupzCv4jBg9sE5NPAoKegMiTo', authData)
+			console.log(response);
+		} catch (e) {
+			console.log(3);
+		}
 	}
 	submitHandler = event => {
 		event.preventDefault()
@@ -120,12 +143,12 @@ class Auth extends Component {
 
 						<Button
 							type="success"
-							onclick={this.loginHandler}
+							onClick={this.loginHandler}
 							disabled={!this.state.isFormValid}
 						>Войти</Button>
 						<Button
 							type="primary"
-							onclick={this.registerHandler}
+							onClick={this.registerHandler}
 							disabled={!this.state.isFormValid}
 						>Зарегистрироваться</Button>
 					</form>

@@ -86,7 +86,6 @@ class Quiz extends Component {
 	}
 
 	render() {
-		console.log(this.state);
 		return (
 			<div className={classes.Quiz}>
 				<div className={classes.QuizWrapper}>
@@ -97,7 +96,7 @@ class Quiz extends Component {
 							? <Loader/>
 							: this.state.isFinished
 							? <FinishedQuiz
-								results={this.state.results}
+								results={this.state.results}ё
 								quiz={this.state.quiz}
 								onRetry={this.retryHandler}
 							/>
