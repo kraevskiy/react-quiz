@@ -4,8 +4,7 @@ import {AUTH_LOGOUT, AUTH_SUCCESS} from "./actionTypes";
 export function auth(email, password, isLogin) {
 	return async dispatch => {
 		const authData = {
-			email: email,
-			password: password,
+			email, password,
 			returnSecureToken: true
 		}
 
@@ -20,9 +19,9 @@ export function auth(email, password, isLogin) {
 
 		const expirationDate = new Date(new Date().getTime() + data.expiresIn * 1000)
 
-		localStorage.setItem('token-quiz-creator', data.idToken)
-		localStorage.setItem('userId-quiz-creator', data.localId)
-		localStorage.setItem('expirationDate-quiz-creator', expirationDate)
+		localStorage.setItem('token', data.idToken)
+		localStorage.setItem('userId', data.localId)
+		localStorage.setItem('expirationDate', expirationDate)
 
 		dispatch(authSuccess(data.idToken))
 		dispatch(autoLogout(data.expiresIn))
@@ -38,11 +37,28 @@ export function autoLogout(time) {
 }
 
 export function logout() {
-	localStorage.removeItem('token-quiz-creator')
-	localStorage.removeItem('userId-quiz-creator')
-	localStorage.removeItem('expirationDate-quiz-creator')
+	localStorage.removeItem('token')
+	localStorage.removeItem('userId')
+	localStorage.removeItem('expirationDate')
 	return {
 		type: AUTH_LOGOUT
+	}
+}
+
+export function autoLogin() {
+	return dispatch => {
+		const token = localStorage.getItem('token')
+		if (!token) {
+			dispatch(logout())
+		} else {
+			const expirationDate = new Date(localStorage.getItem('expirationDate'))
+			if (expirationDate <= new Date()) {
+				dispatch(logout())
+			} else {
+				dispatch(authSuccess(token))
+				dispatch(autoLogout((expirationDate.getTime() - new Date().getTime()) / 1000))
+			}
+		}
 	}
 }
 
